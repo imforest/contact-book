@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Contact</title>
+	<link rel="stylesheet" href="/css/master.css">
+</head>
+<body>
+	<nav>
+		<h2>Contact Book</h2>
+		<div>
+			<ul>
+				<li><a onclick="showElement('index')" href="#">Index</a></li>
+				<li><a onclick="showElement('new')" href="#">New</a></li>
+			</ul>
+		</div>
+	</nav>
+	<section id="index" >
+		<h2>Index</h2>
+		<ul id="names"></ul>
+	</section>
+	<section id="new" style="display: none">
+		<h2>New</h2>
+		<form action="" method="">
+			<div>
+				<label for="name">Name</label>
+				<input type="text" id="name">
+			</div>
+			<div>
+				<label for="email">Email</label>
+				<input type="text" id="email">
+			</div>
+			<div>
+				<label for="phone">Phone</label>
+				<input type="text" id="phone">
+			</div>
+			<div>
+				<input type="button" value="Create" onclick="createContact()"></button>
+			</div>
+		</form>
+	</section>
+	<section id="edit" style="display: none">
+		<h2>Edit</h2>
+	</section>
+	<section id="show" style="display: none">
+		<h2>Show</h2>
+	</section>
+
+	<script>
+	function setEventContact(elem) {
+		elem.addEventListener('click', (e) => {
+			hideElements('section');
+			const elemEdit = document.getElementById('edit');
+			elemEdit.style.display = 'block'; 
+			showContact(e.target.textContent);
+		});
+	}
+
+	function showElement(eid) {
+		const elem = document.getElementById(eid);
+
+		if (!elem) {
+			console.log('Not defined id: ' + eid);
+		} else {
+			hideElements('section');
+			elem.style.display = 'block'; 
+		}
+	}
+
+	function hideElements(tagName) {
+		const elems = document.getElementsByTagName(tagName);
+		for (let elem of elems) {
+			elem.style.display = 'none';
+		}
+	}
+
+	function showContact(id) {
+		hideElements('section');
+		const elemShow = document.getElementById('show');
+		elemShow.style.display = 'block'; 
+	}
+
+	function createContact() {
+		const item = {
+			name: document.getElementById('name').value,
+			email: document.getElementById('email').value,
+			phone: document.getElementById('phone').value,
+		}
+		myContact.create(item);
+		refreshContactElement();
+	}
+
+	function refreshContactElement() {
+		const names = document.getElementById('names');
+		names.querySelectorAll('*').forEach(name => name.remove());
+
+		myContact.data.forEach((values) => {
+				const newOne = createContactElement(values);
+				const child = names.getElementsByTagName('li')[0];
+				names.insertBefore(newOne, child);
+		});
+
+		showElement('index');
+	}
+
+	function createContactElement(item) {
+		const li = document.createElement('li');
+		const a = document.createElement('a');
+		a.href = '#';
+		a.text = item.name;
+		li.appendChild(a);
+
+		setEventContact(li);
+
+		return li;
+	}
+
+	var ContactBook = function() {
+		this.data = new Map();
+	}
+
+	ContactBook.prototype.create = function(item) {
+		this.data.set(item.name, item);
+	}
+	</script>
+
+	<script>
+		var myContact = new ContactBook();
+	</script>
+
+</body>
+</html>
