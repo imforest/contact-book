@@ -41,18 +41,77 @@
 	</section>
 	<section id="edit" style="display: none">
 		<h2>Edit</h2>
+		<div id="editContent"><div>
 	</section>
 	<section id="show" style="display: none">
 		<h2>Show</h2>
+		<div id="showContent"><div>
 	</section>
 
 	<script>
-	function setEventContact(elem) {
+	function setEventContactShow(elem) {
 		elem.addEventListener('click', (e) => {
 			hideElements('section');
-			const elemEdit = document.getElementById('edit');
-			elemEdit.style.display = 'block'; 
+			const elemShow = document.getElementById('show');
+			elemShow.style.display = 'block'; 
 			showContact(e.target.textContent);
+		});
+	}
+
+	function setEventEdit(elem) {
+		elem.addEventListener('click', (e) => {
+			const elemContent = document.getElementById('editContent');
+			elemContent.innerText = '';
+
+			const name = document.getElementsByTagName('h3')[0].innerText;
+			const h3 = document.createElement('h3');
+			h3.innerText = name;
+			elemContent.appendChild(h3);
+			
+			const contact = myContact.get(name);
+
+			var label = document.createElement('label');
+			label.innerText = 'Email';
+			elemContent.appendChild(label);
+			
+			var input = document.createElement('input');
+			input.value = contact.email
+			elemContent.appendChild(input);
+			elemContent.appendChild(document.createElement('br'));
+
+			label = document.createElement('label');
+			label.innerText = 'Phone';
+			elemContent.appendChild(label);
+			
+			input = document.createElement('input');
+			input.value = contact.phone
+			elemContent.appendChild(input);
+			elemContent.appendChild(document.createElement('br'));
+
+			input = document.createElement('input');
+			input.type = 'button';
+			input.value = 'Save';
+			elemContent.appendChild(input);
+			elemContent.appendChild(document.createElement('br'));
+			setEventSave(input);
+
+			hideElements('section');
+			const elemEdit = document.getElementById('edit');
+			elemEdit.style.display = 'block';
+			elemEdit.appendChild(elemContent);
+		});
+	}
+
+	function setEventSave(elem) {
+		elem.addEventListener('click', (e) => {
+			const editContent = document.getElementById('editContent');
+			const item = {
+				name: editContent.getElementsByTagName('h3')[0].innerText,
+				email: editContent.getElementsByTagName('input')[0].value,
+				phone: editContent.getElementsByTagName('input')[1].value,
+			}
+			myContact.create(item);
+			showContact(item.name);
 		});
 	}
 
@@ -74,7 +133,40 @@
 		}
 	}
 
-	function showContact(id) {
+	function showContact(name) {
+		const contact = myContact.data.get(name);
+
+		const elemContent = document.getElementById('showContent');
+		elemContent.textContent = '';
+
+		const h3 = document.createElement('h3');
+		h3.innerText = contact.name;
+		elemContent.appendChild(h3);
+
+		var label = document.createElement('label');
+		label.innerText = 'Email: ';
+		elemContent.appendChild(label);
+		
+		var span = document.createElement('span');
+		span.innerText = contact.email;
+		elemContent.appendChild(span);
+		elemContent.appendChild(document.createElement('br'));
+
+		label = document.createElement('label');
+		label.innerText = 'Phone: ';
+		elemContent.appendChild(label);
+		
+		span = document.createElement('span');
+		span.innerText = contact.phone;
+		elemContent.appendChild(span);
+		elemContent.appendChild(document.createElement('br'));
+
+		var a = document.createElement('a');
+		a.href = '#';
+		a.text = 'Edit';
+		elemContent.appendChild(a);
+		setEventEdit(a);
+
 		hideElements('section');
 		const elemShow = document.getElementById('show');
 		elemShow.style.display = 'block'; 
@@ -110,7 +202,7 @@
 		a.text = item.name;
 		li.appendChild(a);
 
-		setEventContact(li);
+		setEventContactShow(a);
 
 		return li;
 	}
@@ -122,6 +214,11 @@
 	ContactBook.prototype.create = function(item) {
 		this.data.set(item.name, item);
 	}
+
+	ContactBook.prototype.get = function(name) {
+		return this.data.get(name);
+	}
+
 	</script>
 
 	<script>
