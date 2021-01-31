@@ -102,6 +102,18 @@
 		});
 	}
 
+	function setEventDelete(elem) {
+		elem.addEventListener('click', (e) => {
+			const elemContent = document.getElementById('editContent');
+			elemContent.innerText = '';
+
+			const name = document.getElementsByTagName('h3')[0].innerText;
+			myContact.delete(name);
+			hideElements('section');
+			refreshContactElement();
+		});
+	}
+
 	function setEventSave(elem) {
 		elem.addEventListener('click', (e) => {
 			const editContent = document.getElementById('editContent');
@@ -167,6 +179,13 @@
 		elemContent.appendChild(a);
 		setEventEdit(a);
 
+		a = document.createElement('a');
+		a.href = '#';
+		a.style.marginLeft = '20px';
+		a.text = 'Delete';
+		elemContent.appendChild(a);
+		setEventDelete(a);
+
 		hideElements('section');
 		const elemShow = document.getElementById('show');
 		elemShow.style.display = 'block'; 
@@ -217,6 +236,10 @@
 
 	ContactBook.prototype.get = function(name) {
 		return this.data.get(name);
+	}
+
+	ContactBook.prototype.delete = function(name) {
+		return this.data.delete(name);
 	}
 
 	</script>
